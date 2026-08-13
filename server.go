@@ -11,6 +11,7 @@ type Server struct {
 func NewServer(token string) *Server {
 	s := &Server{store: NewStore(), token: token, mux: http.NewServeMux()}
 	s.mux.HandleFunc("GET /health", s.handleHealth)
+	s.mux.HandleFunc("GET /version", s.handleVersion)
 	return s
 }
 
@@ -20,4 +21,8 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, 200, map[string]any{"status": "ok"})
+}
+
+func (s *Server) handleVersion(w http.ResponseWriter, r *http.Request) {
+	writeJSON(w, 200, map[string]any{"version": "0.1.0"})
 }
