@@ -33,3 +33,23 @@ func (s *Store) Get(id int) (Record, bool) {
 	rec, ok := s.items[id]
 	return rec, ok
 }
+
+func (s *Store) List() []Record {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	out := make([]Record, 0, len(s.items))
+	for _, rec := range s.items {
+		out = append(out, rec)
+	}
+	return out
+}
+
+func (s *Store) Delete(id int) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if _, ok := s.items[id]; !ok {
+		return false
+	}
+	delete(s.items, id)
+	return true
+}
