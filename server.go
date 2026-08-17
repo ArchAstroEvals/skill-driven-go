@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 )
 
 type Server struct {
@@ -16,6 +17,7 @@ func NewServer(token string) *Server {
 	s.mux.HandleFunc("GET /health", s.handleHealth)
 	s.mux.HandleFunc("GET /version", s.handleVersion)
 	s.mux.HandleFunc("POST /records", s.handleCreate)
+	s.mux.HandleFunc("GET /records/{id}", s.handleFetch)
 	return s
 }
 
@@ -38,4 +40,18 @@ func (s *Server) handleCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, 201, s.store.Create(body))
+}
+
+func (s *Server) handleFetch(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		writeErr(w, 404, "not_found")
+		return
+	}
+	rec, ok := s.store.Get(id)
+	if !ok {
+		writeErr(w, 404, "not_found")
+		return
+	}
+	writeJSON(w, 200, rec)
 }
