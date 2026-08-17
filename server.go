@@ -18,6 +18,7 @@ func NewServer(token string) *Server {
 	s.mux.HandleFunc("GET /version", s.handleVersion)
 	s.mux.HandleFunc("POST /records", s.handleCreate)
 	s.mux.HandleFunc("GET /records/{id}", s.handleFetch)
+	s.mux.HandleFunc("GET /records", s.handleList)
 	return s
 }
 
@@ -54,4 +55,8 @@ func (s *Server) handleFetch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, 200, rec)
+}
+
+func (s *Server) handleList(w http.ResponseWriter, r *http.Request) {
+	writeJSON(w, 200, s.store.List())
 }
