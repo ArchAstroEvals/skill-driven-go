@@ -19,6 +19,7 @@ func NewServer(token string) *Server {
 	s.mux.HandleFunc("POST /records", s.handleCreate)
 	s.mux.HandleFunc("GET /records/{id}", s.handleFetch)
 	s.mux.HandleFunc("GET /records", s.handleList)
+	s.mux.HandleFunc("DELETE /records/{id}", s.handleDelete)
 	return s
 }
 
@@ -59,4 +60,19 @@ func (s *Server) handleFetch(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleList(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, 200, s.store.List())
+}
+
+func (s *Server) handleDelete(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		writeErr(w, 404, "not_found")
+		return
+	}
+	rec, ok := s.store.Get(id)
+	if !ok {
+		writeErr(w, 404, "not_found")
+		return
+	}
+	s.store.Delete(id)
+	writeJSON(w, 200, rec)
 }
