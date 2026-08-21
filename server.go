@@ -47,12 +47,12 @@ func (s *Server) handleCreate(w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleFetch(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
-		writeErr(w, 404, "not_found")
+		writeJSON(w, 404, notFound("route"))
 		return
 	}
 	rec, ok := s.store.Get(id)
 	if !ok {
-		writeErr(w, 404, "not_found")
+		writeJSON(w, 404, notFound("record"))
 		return
 	}
 	writeJSON(w, 200, rec)
@@ -65,12 +65,12 @@ func (s *Server) handleList(w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleDelete(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
-		writeErr(w, 404, "not_found")
+		writeJSON(w, 404, notFound("route"))
 		return
 	}
 	rec, ok := s.store.Get(id)
 	if !ok {
-		writeErr(w, 404, "not_found")
+		writeJSON(w, 404, notFound("record"))
 		return
 	}
 	s.store.Delete(id)
