@@ -3,7 +3,7 @@ package main
 func selectFields(rec Record, fields []string) Record {
 	out := Record{}
 	for _, f := range fields {
-		if v, ok := rec[f]; ok {
+		if v, ok := rec[f]; ok && v != nil {
 			out[f] = v
 		}
 	}
