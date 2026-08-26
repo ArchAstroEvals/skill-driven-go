@@ -16,15 +16,25 @@ func NewServer(token string) *Server {
 	s := &Server{store: NewStore(), token: token, mux: http.NewServeMux()}
 	s.mux.HandleFunc("GET /health", s.handleHealth)
 	s.mux.HandleFunc("GET /version", s.handleVersion)
-	s.mux.HandleFunc("POST /records", s.handleCreate)
+	s.mux.HandleFunc("POST /records", s.requireAuth(s.handleCreate))
 	s.mux.HandleFunc("GET /records/{id}", s.handleFetch)
 	s.mux.HandleFunc("GET /records", s.handleList)
-	s.mux.HandleFunc("DELETE /records/{id}", s.handleDelete)
+	s.mux.HandleFunc("DELETE /records/{id}", s.requireAuth(s.handleDelete))
 	return s
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.mux.ServeHTTP(w, r)
+}
+
+func (s *Server) requireAuth(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !validToken(r.Header.Get("Authorization"), s.token) {
+			writeJSON(w, 401, unauthorized())
+			return
+		}
+		next(w, r)
+	}
 }
 
 func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
