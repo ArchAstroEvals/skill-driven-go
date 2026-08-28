@@ -69,7 +69,22 @@ func (s *Server) handleFetch(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleList(w http.ResponseWriter, r *http.Request) {
-	writeJSON(w, 200, s.store.List())
+	q := r.URL.Query()
+	params := map[string]string{}
+	for k, v := range q {
+		if len(v) > 0 {
+			params[k] = v[0]
+		}
+	}
+	recs := filterKnown(s.store.List(), params)
+	if sf := params["sort"]; sf != "" {
+		recs = sortBy(recs, sf, params["order"] == "desc")
+	}
+	perPage := atoiOr(params["per_page"], 20)
+	if perPage > 100 {
+		perPage = 100
+	}
+	writeJSON(w, 200, paginate(recs, atoiOr(params["page"], 1), perPage))
 }
 
 func (s *Server) handleDelete(w http.ResponseWriter, r *http.Request) {
