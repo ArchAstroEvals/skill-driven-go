@@ -10,6 +10,7 @@ type Server struct {
 	store *Store
 	token string
 	mux   *http.ServeMux
+	handler http.Handler
 }
 
 func NewServer(token string) *Server {
@@ -20,11 +21,12 @@ func NewServer(token string) *Server {
 	s.mux.HandleFunc("GET /records/{id}", s.handleFetch)
 	s.mux.HandleFunc("GET /records", s.handleList)
 	s.mux.HandleFunc("DELETE /records/{id}", s.requireAuth(s.handleDelete))
+	s.handler = withLogging(s.mux)
 	return s
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	s.mux.ServeHTTP(w, r)
+	s.handler.ServeHTTP(w, r)
 }
 
 func (s *Server) requireAuth(next http.HandlerFunc) http.HandlerFunc {
