@@ -21,7 +21,7 @@ func NewServer(token string) *Server {
 	s.mux.HandleFunc("GET /records/{id}", s.handleFetch)
 	s.mux.HandleFunc("GET /records", s.handleList)
 	s.mux.HandleFunc("DELETE /records/{id}", s.requireAuth(s.handleDelete))
-	s.handler = withLogging(withRequestID(s.mux))
+	s.handler = withLogging(withRequestID(withCORS(s.mux)))
 	return s
 }
 

@@ -33,3 +33,10 @@ func withLogging(next http.Handler) http.Handler {
 		log.Printf("%s %s %d", r.Method, r.URL.Path, rec.status)
 	})
 }
+
+func withCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		next.ServeHTTP(w, r)
+	})
+}
