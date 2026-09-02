@@ -21,12 +21,18 @@ func NewServer(token string) *Server {
 	s.mux.HandleFunc("GET /records/{id}", s.handleFetch)
 	s.mux.HandleFunc("GET /records", s.handleList)
 	s.mux.HandleFunc("DELETE /records/{id}", s.requireAuth(s.handleDelete))
+	s.mux.HandleFunc("OPTIONS /records", s.handleOptions)
+	s.mux.HandleFunc("OPTIONS /records/{id}", s.handleOptions)
 	s.handler = withLogging(withRequestID(withCORS(s.mux)))
 	return s
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.handler.ServeHTTP(w, r)
+}
+
+func (s *Server) handleOptions(w http.ResponseWriter, r *http.Request) {
+	writeJSON(w, 204, map[string]any{})
 }
 
 func (s *Server) requireAuth(next http.HandlerFunc) http.HandlerFunc {
