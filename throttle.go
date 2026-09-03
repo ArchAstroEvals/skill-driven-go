@@ -1,6 +1,9 @@
 package main
 
-import "time"
+import (
+	"net/http"
+	"time"
+)
 
 type Bucket struct {
 	limit  int
@@ -15,8 +18,9 @@ func NewBucket(limit int, window time.Duration) *Bucket {
 }
 
 func (b *Bucket) Allow(now time.Time) bool {
-	if b.empty {
+	if b.empty || !now.Before(b.reset) {
 		b.empty = false
+		b.used = 0
 		b.reset = now.Add(b.window)
 	}
 	if b.used >= b.limit {
@@ -24,4 +28,14 @@ func (b *Bucket) Allow(now time.Time) bool {
 	}
 	b.used++
 	return true
+}
+
+func (s *Server) limit(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if !s.bucket.Allow(time.Now()) {
+			writeJSON(w, 429, map[string]any{"error": "rate_limited"})
+			return
+		}
+		next(w, r)
+	}
 }
