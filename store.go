@@ -5,9 +5,9 @@ import "sync"
 type Record map[string]any
 
 type Store struct {
-	mu     sync.Mutex
-	next   int
-	items  map[int]Record
+	mu    sync.Mutex
+	next  int
+	items map[int]Record
 }
 
 func NewStore() *Store {
@@ -52,4 +52,17 @@ func (s *Store) Delete(id int) bool {
 	}
 	delete(s.items, id)
 	return true
+}
+
+func (s *Store) BulkCreate(items []map[string]any) ([]Record, []string) {
+	for _, attrs := range items {
+		if missing := required(attrs, []string{"name"}); len(missing) > 0 {
+			return nil, missing
+		}
+	}
+	out := make([]Record, 0, len(items))
+	for _, attrs := range items {
+		out = append(out, s.Create(attrs))
+	}
+	return out, nil
 }
