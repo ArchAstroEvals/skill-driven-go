@@ -6,8 +6,9 @@ import (
 )
 
 func main() {
-	srv := NewServer("tok-dev")
-	if err := http.ListenAndServe(":8080", srv); err != nil {
+	cfg := loadConfig()
+	srv := NewServer(cfg.Token)
+	if err := http.ListenAndServe(":"+cfg.Port, srv); err != nil {
 		os.Exit(1)
 	}
 }
