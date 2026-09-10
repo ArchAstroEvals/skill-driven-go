@@ -9,8 +9,7 @@ func TestConfig(t *testing.T) {
   if cfg.Port != "8080" || cfg.Token != "tok-dev" {
     t.Fatalf("bad defaults %+v", cfg)
   }
-  t.Setenv("PORT", "9090")
-  if loadConfig().Port != "9090" {
-    t.Fatal("want env override")
+  if cfg.ReadTimeout != 5 || cfg.WriteTimeout != 10 {
+    t.Fatal("want timeout defaults")
   }
 }

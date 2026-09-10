@@ -3,8 +3,10 @@ package main
 import "os"
 
 type Config struct {
-	Port  string
-	Token string
+	Port         string
+	Token        string
+	ReadTimeout  int
+	WriteTimeout int
 }
 
 func loadConfig() Config {
@@ -16,5 +18,5 @@ func loadConfig() Config {
 	if token == "" {
 		token = "tok-dev"
 	}
-	return Config{Port: port, Token: token}
+	return Config{Port: port, Token: token, ReadTimeout: 5, WriteTimeout: 10}
 }
