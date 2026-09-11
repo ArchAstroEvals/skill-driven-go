@@ -1,6 +1,9 @@
 package main
 
-import "sync"
+import (
+	"sync"
+	"time"
+)
 
 type Record map[string]any
 
@@ -19,7 +22,7 @@ func (s *Store) Create(attrs map[string]any) Record {
 	defer s.mu.Unlock()
 	s.next++
 	id := s.next
-	rec := Record{"id": id}
+	rec := Record{"id": id, "created_at": time.Now().Unix()}
 	for k, v := range attrs {
 		rec[k] = v
 	}
