@@ -23,6 +23,7 @@ func NewServer(token string) *Server {
 	s.mux.HandleFunc("GET /records/{id}", s.handleFetch)
 	s.mux.HandleFunc("GET /records", s.handleList)
 	s.mux.HandleFunc("DELETE /records/{id}", s.requireAuth(s.handleDelete))
+	s.mux.HandleFunc("PATCH /records/{id}", s.requireAuth(s.handlePatch))
 	s.mux.HandleFunc("OPTIONS /records", s.handleOptions)
 	s.mux.HandleFunc("OPTIONS /records/{id}", s.handleOptions)
 	s.handler = withLogging(withRequestID(withCORS(s.mux)))
@@ -111,3 +112,22 @@ func (s *Server) handleDelete(w http.ResponseWriter, r *http.Request) {
 	s.store.Delete(id)
 	writeJSON(w, 200, rec)
 }
+func (s *Server) handlePatch(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		writeJSON(w, 404, notFound("route"))
+		return
+	}
+	var body map[string]any
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		writeErr(w, 400, "bad_request")
+		return
+	}
+	rec, ok := s.store.Update(id, body)
+	if !ok {
+		writeJSON(w, 404, notFound("record"))
+		return
+	}
+	writeJSON(w, 200, rec)
+}
+

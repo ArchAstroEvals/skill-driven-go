@@ -69,3 +69,18 @@ func (s *Store) BulkCreate(items []map[string]any) ([]Record, []string) {
 	}
 	return out, nil
 }
+
+func (s *Store) Update(id int, attrs map[string]any) (Record, bool) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	rec, ok := s.items[id]
+	if !ok {
+		return nil, false
+	}
+	for k, v := range attrs {
+		if k != "id" {
+			rec[k] = v
+		}
+	}
+	return rec, true
+}
