@@ -123,6 +123,12 @@ func (s *Server) handlePatch(w http.ResponseWriter, r *http.Request) {
 		writeErr(w, 400, "bad_request")
 		return
 	}
+	if name, present := body["name"]; present {
+		if text, ok := name.(string); !ok || text == "" {
+			writeErr(w, 400, "invalid_name")
+			return
+		}
+	}
 	rec, ok := s.store.Update(id, body)
 	if !ok {
 		writeJSON(w, 404, notFound("record"))
