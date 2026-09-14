@@ -70,6 +70,16 @@ func (s *Store) BulkCreate(items []map[string]any) ([]Record, []string) {
 	return out, nil
 }
 
+func (s *Store) BulkDelete(ids []int) int {
+	n := 0
+	for _, id := range ids {
+		if s.Delete(id) {
+			n++
+		}
+	}
+	return n
+}
+
 func (s *Store) Update(id int, attrs map[string]any) (Record, bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
