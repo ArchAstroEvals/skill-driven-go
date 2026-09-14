@@ -76,6 +76,12 @@ func (s *Server) handleFetch(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, 404, notFound("record"))
 		return
 	}
+	etag := "W/\"" + strconv.Itoa(id) + "\""
+	w.Header().Set("ETag", etag)
+	if r.Header.Get("If-None-Match") == etag {
+		w.WriteHeader(304)
+		return
+	}
 	writeJSON(w, 200, rec)
 }
 
