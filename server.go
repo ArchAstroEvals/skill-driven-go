@@ -101,6 +101,7 @@ func (s *Server) handleList(w http.ResponseWriter, r *http.Request) {
 	if perPage > 100 {
 		perPage = 100
 	}
+	w.Header().Set("X-Total-Count", strconv.Itoa(len(recs)))
 	writeJSON(w, 200, paginate(recs, atoiOr(params["page"], 1), perPage))
 }
 
