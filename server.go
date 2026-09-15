@@ -26,7 +26,7 @@ func NewServer(token string) *Server {
 	s.mux.HandleFunc("PATCH /records/{id}", s.requireAuth(s.handlePatch))
 	s.mux.HandleFunc("OPTIONS /records", s.handleOptions)
 	s.mux.HandleFunc("OPTIONS /records/{id}", s.handleOptions)
-	s.handler = withLogging(withRequestID(withCORS(s.mux)))
+	s.handler = withLogging(withRequestID(withCORS(withMaxBytes(s.mux, 1<<20))))
 	return s
 }
 
