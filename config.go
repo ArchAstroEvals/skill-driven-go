@@ -1,6 +1,9 @@
 package main
 
-import "os"
+import (
+	"os"
+	"strconv"
+)
 
 type Config struct {
 	Port         string
@@ -12,6 +15,9 @@ type Config struct {
 func loadConfig() Config {
 	port := os.Getenv("PORT")
 	if port == "" {
+		port = "8080"
+	}
+	if _, err := strconv.Atoi(port); err != nil {
 		port = "8080"
 	}
 	token := os.Getenv("TOKEN")
