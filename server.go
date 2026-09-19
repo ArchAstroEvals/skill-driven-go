@@ -53,7 +53,7 @@ func (s *Server) handleHealth(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleVersion(w http.ResponseWriter, r *http.Request) {
-	writeJSON(w, 200, map[string]any{"version": "0.1.0"})
+	writeJSON(w, 200, map[string]any{"version": "0.2.0"})
 }
 
 func (s *Server) handleCreate(w http.ResponseWriter, r *http.Request) {
