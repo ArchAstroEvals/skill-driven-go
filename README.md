@@ -6,9 +6,13 @@ Tiny records API in Go.
 
 Run `go run .` then curl localhost:8080/health.
 
+## Docker
+
+Build `docker build -t harbor .` then run on port 8080.
+
 ## Test
 
-Run `go test ./...`.
+Run `go test ./...` or `make test`.
 
 ## Layout
 
