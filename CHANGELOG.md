@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Nothing yet.
+
 ## v0.2.0
 
 - PATCH record updates with blank-name rejection.
