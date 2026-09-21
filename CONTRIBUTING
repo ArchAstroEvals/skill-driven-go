@@ -1,3 +1,5 @@
 # Contributing
 
 Write a plan doc in plans/ first, keep every commit green with go test, and open a PR for review.
+
+Use small commits with imperative subjects, one concern per PR.
