@@ -94,6 +94,9 @@ func (s *Server) handleList(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	recs := filterKnown(s.store.List(), params)
+	if needle := params["q"]; needle != "" {
+		recs = searchByName(recs, needle)
+	}
 	if sf := params["sort"]; sf != "" {
 		recs = sortBy(recs, sf, params["order"] == "desc")
 	}
