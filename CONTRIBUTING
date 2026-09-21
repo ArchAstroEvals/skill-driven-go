@@ -1,0 +1,3 @@
+# Contributing
+
+Write a plan doc in plans/ first, keep every commit green with go test, and open a PR for review.
